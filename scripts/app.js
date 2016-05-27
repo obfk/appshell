@@ -206,4 +206,21 @@
            .then(function() { console.log('Service Worker Registered'); });
   }
 
+  if ('caches' in window) {
+    caches.match(url).then(function(response) {
+      if (response) {
+        response.json().then(function(json) {
+          // Only update if the XHR is still pending, otherwise the XHR
+          // has already returned and provided the latest data.
+          if (app.hasRequestPending) {
+            console.log('updated from cache');
+            json.key = key;
+            json.label = label;
+            app.updateForecastCard(json);
+          }
+        });
+      }
+    });
+  }
+
 })();
